@@ -138,10 +138,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // 最新の位置情報
         Location location = locationManager.getLastKnownLocation(locationProvider);
 
-        if (location != null) {
+        //if (location != null) {
           //  TextView textView = (TextView) findViewById(R.id.debug3);
            // textView.setText(String.valueOf( "onCreate() : " + location.getLatitude()) + "," + String.valueOf(location.getLongitude()));
-        }
+        //}
 
         SearchPort(location);
         //コンパスのonCreate
