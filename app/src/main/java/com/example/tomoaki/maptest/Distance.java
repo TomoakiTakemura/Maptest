@@ -1,5 +1,7 @@
 package com.example.tomoaki.maptest;
 
+import java.util.List;
+
 import static java.lang.Math.PI;
 import static java.lang.Math.acos;
 import static java.lang.Math.cos;
@@ -10,6 +12,7 @@ import static java.lang.Math.sin;
  */
 
 public class Distance {
+
 
     public float DistanceCalc(float lat1,float lng1,float lat2,float lng2){
 
@@ -41,6 +44,23 @@ public class Distance {
         }
         float dirN0 = (dirE0 + 90) % 360; //(dirE0+90)÷360の余りを出力 北向きが０度の方向
         return dirN0;
+    }
+
+    public int searchNearPort(float lat1,float lng1){
+
+        PortList p =new PortList();
+        List<TakaPort> list = p.getPortList();
+        int minPortNum=0;
+
+
+        for(int l = 0;l < list.size();l++){
+            if(DistanceCalc(lat1,lng1,(float) list.get(minPortNum).getLat(),(float) list.get(minPortNum).getLng())>
+                    DistanceCalc(lat1,lng1,(float) list.get(l).getLat(),(float) list.get(l).getLng()) ){
+                minPortNum = l;
+            }
+        }
+
+        return minPortNum+1;
     }
 
 
