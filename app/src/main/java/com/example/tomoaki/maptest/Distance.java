@@ -1,5 +1,7 @@
 package com.example.tomoaki.maptest;
 
+import android.util.Log;
+
 import java.util.List;
 
 import static java.lang.Math.PI;
@@ -28,6 +30,8 @@ public class Distance {
         float distance = (float) (r * acos(sin(lat1) * sin(lat2) + cos(lat1) * cos(lat2) * cos(lng2 - lng1)));
 
         //System.out.printf("%f km", distance);
+
+        Log.d("Distance",String.valueOf(distance));
 
         return distance*1000;
 
