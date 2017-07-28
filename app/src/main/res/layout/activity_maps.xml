@@ -100,12 +100,12 @@
         android:layout_height="match_parent"
         android:layout_weight="4"
         android:orientation="horizontal" >
-        <SurfaceView
+        <com.example.tomoaki.maptest.CompassView
             android:id="@+id/compassView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
-        </SurfaceView>
+        </com.example.tomoaki.maptest.CompassView>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
