@@ -14,6 +14,7 @@ import android.view.View;
 public class CompassView extends View {
     private Bitmap bmp = null;
     private float arc = 45;
+    private float kakudo=0;
     //ActivityからContext(この場合描写先、ということ？)だけを指定してインスタンスを作成したときに呼び出される
     //コンストラクタ
     public CompassView(Context cont) {
@@ -24,6 +25,10 @@ public class CompassView extends View {
     public CompassView(Context cont, AttributeSet attr) {
         super(cont,attr);
         bmp = BitmapFactory.decodeResource(getResources(), R.drawable.arrowsbe);
+    }
+
+    public void changeArc(float a){
+        kakudo=a;
     }
 
     @Override
@@ -40,9 +45,9 @@ public class CompassView extends View {
     public void MoveArc(float a){
 
         if(a>=0) {
-            arc = -a;
+            arc = (-a)+kakudo;
         }else{
-            arc = -360 - a;
+            arc = (-360 - a)+kakudo;
         }
         invalidate();
     }
