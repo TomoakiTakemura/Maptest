@@ -1,14 +1,19 @@
 package com.example.tomoaki.maptest;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 
 
 public class CompassView extends View {
+    private Bitmap bmp = null;
+    private float arc = 45;
     //ActivityからContext(この場合描写先、ということ？)だけを指定してインスタンスを作成したときに呼び出される
     //コンストラクタ
     public CompassView(Context cont) {
@@ -18,11 +23,28 @@ public class CompassView extends View {
     //AttributeSetというのはタグ内にあるlayout_width=""などらしい
     public CompassView(Context cont, AttributeSet attr) {
         super(cont,attr);
+        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.arrowsbe);
     }
 
     @Override
     protected void onDraw(Canvas canvas){
         canvas.drawColor(Color.BLACK);
+        Rect destRect1 = new Rect(0, 0, canvas.getWidth(), canvas.getHeight());
+        Rect srcRect1 = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
+        canvas.rotate(arc, canvas.getWidth() / 2,canvas.getHeight() / 2);
+        canvas.drawBitmap(bmp, srcRect1, destRect1, null);
+
+
+    }
+
+    public void MoveArc(float a){
+
+        if(a>=0) {
+            arc = a;
+        }else{
+            arc = 360 + a;
+        }
+        invalidate();
     }
 
     //xmlでlayout_width,layout_heightを指定すると指定したサイズに応じた大きさになります
