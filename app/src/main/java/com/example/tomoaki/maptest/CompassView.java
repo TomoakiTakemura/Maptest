@@ -28,7 +28,7 @@ public class CompassView extends View {
 
     @Override
     protected void onDraw(Canvas canvas){
-        canvas.drawColor(Color.BLACK);
+        canvas.drawColor(Color.WHITE);
         Rect destRect1 = new Rect(0, 0, canvas.getWidth(), canvas.getHeight());
         Rect srcRect1 = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
         canvas.rotate(arc, canvas.getWidth() / 2,canvas.getHeight() / 2);

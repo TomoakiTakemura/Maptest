@@ -187,9 +187,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         List<TakaPort> list = p.getPortList();
         float kyori = d.DistanceCalc((float) l.getLatitude(),(float) l.getLongitude(),(float) list.get(port).getLat(),(float) list.get(port).getLng());
 
-        Log.d("DistanceTest",String.valueOf(kyori));
+        int I_kyori = (int)kyori;
+
+        Log.d("DistanceTest",String.valueOf(I_kyori));
         textView.setText(list.get(port).getName());
-        KView.setText(String.valueOf(kyori));
+        KView.setText(String.valueOf(I_kyori));
 
     }
 
