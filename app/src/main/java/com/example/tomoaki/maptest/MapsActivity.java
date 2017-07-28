@@ -128,7 +128,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         /* 位置情報の通知するための最小時間間隔（ミリ秒） */
-        final long minTime = 500;
+        final long minTime = 1000;
         /* 位置情報を通知するための最小距離間隔（メートル）*/
         final long minDistance = 1;
 
