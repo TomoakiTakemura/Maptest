@@ -73,7 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //TextView textView4 = (TextView) findViewById(R.id.debug4);
     //TextView textView5 = (TextView) findViewById(R.id.debug5);
     //TextView textView6 = (TextView) findViewById(R.id.debug6);
-
+    CompassView cv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +85,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        cv = (CompassView) findViewById(R.id.compassView);
 
         // Fine か Coarseのいずれかのパーミッションが得られているかチェックする
         // 本来なら、Android6.0以上かそうでないかで実装を分ける必要がある
@@ -233,6 +235,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             float degreeDir = (float)Math.toDegrees(orientation[0]);
             TextView textView4 = (TextView) findViewById(R.id.debug4);
             textView4.setText(String.valueOf(degreeDir));
+            cv.MoveArc(degreeDir);
             //Log.i("onSensorChanged", "角度:" + degreeDir);
         }
     }
