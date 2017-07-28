@@ -61,6 +61,7 @@ import java.util.ArrayList;
 import java.util.*;
 
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Marker;
 
 //時刻
 import android.text.format.Time;
@@ -77,6 +78,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private SensorManager mSensorManager;   // センサマネージャ
     private Sensor mAccelerometer;  // 加速度センサ
     private Sensor mMagneticField;  // 磁気センサ
+    private boolean Flag = false;
+    private Marker mMarker = null;
 
 
     //TextView textView1 = (TextView) findViewById(R.id.debug1);
@@ -171,16 +174,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         SearchPort(location);
 
-        //コンパスのonCreate
-        // センサーを取り出す
-        mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mMagneticField = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+            //コンパスのonCreate
+            // センサーを取り出す
+            mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+            mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            mMagneticField = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
-        mSensorManager.registerListener(
-                this, this.mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(
-                this, this.mMagneticField, SensorManager.SENSOR_DELAY_NORMAL);
+            mSensorManager.registerListener(
+                    this, this.mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+            mSensorManager.registerListener(
+                    this, this.mMagneticField, SensorManager.SENSOR_DELAY_NORMAL);
+
 
     }
 
@@ -236,9 +240,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //CameraPosition pos = new CameraPosition(defPos, 16.0f, 0.0f, 0.0f); //CameraUpdate
         //mMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
         BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
-        mMap.addMarker(new MarkerOptions().position(defPos).title("現在地").icon(icon));
+        if(mMarker != null)  mMarker.remove();
+        mMarker = mMap.addMarker(new MarkerOptions().position(defPos).title("現在地").icon(icon));
 
-
+        if(!Flag) {
+            Flag = true;
+            CameraPosition pos = new CameraPosition(defPos, 16.0f, 0.0f, 0.0f); //CameraUpdate
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
+        }
 
     }
 
@@ -281,6 +290,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng defPos = new LatLng(36.3242936, 139.0073642);//たかちゃり範囲の中心らへん
         CameraPosition pos = new CameraPosition(defPos, 16.0f, 0.0f, 0.0f); //CameraUpdate
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
+
+        //LatLng defPos = new LatLng(location.getLatitude(), location.getLongitude());
+        //BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+        //mMap.addMarker(new MarkerOptions().position(defPos).title("現在地").icon(icon));
     }
 
 
