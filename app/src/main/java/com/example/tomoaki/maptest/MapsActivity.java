@@ -143,6 +143,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             textView.setText(String.valueOf( "onCreate() : " + location.getLatitude()) + "," + String.valueOf(location.getLongitude()));
         }
 
+        SearchPort(location);
         //コンパスのonCreate
         // センサーを取り出す
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
@@ -153,6 +154,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 this, this.mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(
                 this, this.mMagneticField, SensorManager.SENSOR_DELAY_NORMAL);
+
+    }
+
+
+    public void SearchPort(Location l){
+        Distance d = new Distance();
+        int port = d.searchNearPort((float) l.getLatitude(),(float) l.getLongitude());
+        TextView textView = (TextView) findViewById(R.id.portID);
+        TextView KView = (TextView) findViewById(R.id.distance);
+        PortList p =new PortList();
+        List<TakaPort> list = p.getPortList();
+        float kyori = d.DistanceCalc((float) l.getLatitude(),(float) l.getLongitude(),(float) list.get(port).getLat(),(float) list.get(port).getLng());
+
+        textView.setText(list.get(port).getName());
+        KView.setText(String.valueOf(kyori));
 
     }
 
@@ -171,7 +187,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         else
             usableText.setText(String.valueOf("利用不可"));
 
-
+        SearchPort(location);
 
     }
 
