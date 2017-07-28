@@ -40,107 +40,81 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
-        }
-        else{
-            locationStart();
-        }
+    // Fine か Coarseのいずれかのパーミッションが得られているかチェックする
+        // 本来なら、Android6.0以上かそうでないかで実装を分ける必要がある
+        if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_FINE_LOCATION)  != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
+            /** fine location のリクエストコード（値は他のパーミッションと被らなければ、なんでも良い）*/
+            final int requestCode = 1;
 
-    }
-
-    private void locationStart(){
-        Log.d("debug","locationStart()");
-
-        // LocationManager インスタンス生成
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        final boolean gpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (!gpsEnabled) {
-            // GPSを設定するように促す
-            Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(settingsIntent);
-            Log.d("debug", "not gpsEnable, startActivity");
-        } else {
-            Log.d("debug", "gpsEnabled");
-        }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
-
-            Log.d("debug", "checkSelfPermission false");
+            // いずれも得られていない場合はパーミッションのリクエストを要求する
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, requestCode );
             return;
         }
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 50, this);
-    }
+        // 位置情報を管理している LocationManager のインスタンスを生成する
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        String locationProvider = null;
 
-    // 結果の受け取り
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == 1000) {
-            // 使用が許可された
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("debug","checkSelfPermission true");
-
-                locationStart();
-                return;
-
-            } else {
-                // それでも拒否された時の対応
-                Toast toast = Toast.makeText(this, "これ以上なにもできません", Toast.LENGTH_SHORT);
-                toast.show();
-            }
+        // GPSが利用可能になっているかどうかをチェック
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            locationProvider = LocationManager.GPS_PROVIDER;
         }
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        switch (status) {
-            case LocationProvider.AVAILABLE:
-                Log.d("debug", "LocationProvider.AVAILABLE");
-                break;
-            case LocationProvider.OUT_OF_SERVICE:
-                Log.d("debug", "LocationProvider.OUT_OF_SERVICE");
-                break;
-            case LocationProvider.TEMPORARILY_UNAVAILABLE:
-                Log.d("debug", "LocationProvider.TEMPORARILY_UNAVAILABLE");
-                break;
+        // GPSプロバイダーが有効になっていない場合は基地局情報が利用可能になっているかをチェック
+        else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            locationProvider = LocationManager.NETWORK_PROVIDER;
         }
+        // いずれも利用可能でない場合は、GPSを設定する画面に遷移する
+        else {
+            Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(settingsIntent);
+            return;
+        }
+
+        /** 位置情報の通知するための最小時間間隔（ミリ秒） */
+        final long minTime = 500;
+        /** 位置情報を通知するための最小距離間隔（メートル）*/
+        final long minDistance = 1;
+
+        // 利用可能なロケーションプロバイダによる位置情報の取得の開始
+        // FIXME 本来であれば、リスナが複数回登録されないようにチェックする必要がある
+        locationManager.requestLocationUpdates(locationProvider, minTime, minDistance, this);
+        // 最新の位置情報
+        Location location = locationManager.getLastKnownLocation(locationProvider);
+
+        if (location != null) {
+            TextView textView = (TextView) findViewById(R.id.debug3);
+            textView.setText(String.valueOf( "onCreate() : " + location.getLatitude()) + "," + String.valueOf(location.getLongitude()));
+        }
+
     }
 
+    //位置情報が通知されるたびにコールバックされるメソッド
     @Override
-    public void onLocationChanged(Location location) {
-        // 緯度の表示
-        TextView textView1 = (TextView) findViewById(R.id.debug2);
-        textView1.setText("Latitude:"+location.getLatitude());
-
-        // 経度の表示
-        TextView textView2 = (TextView) findViewById(R.id.debug3);
-        textView2.setText("Latitude:"+location.getLongitude());
+    public void onLocationChanged(Location location){
+        TextView textView = (TextView) findViewById(R.id.debug3);
+        textView.setText(String.valueOf("onLocationChanged() : " + location.getLatitude()) + ":" + String.valueOf(location.getLongitude()));
     }
 
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
+    //ロケーションプロバイダが利用不可能になるとコールバックされるメソッド
     @Override
     public void onProviderDisabled(String provider) {
-
+        //ロケーションプロバイダーが使われなくなったらリムーブする必要がある
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
+    //ロケーションプロバイダが利用可能になるとコールバックされるメソッド
+    @Override
+    public void onProviderEnabled(String provider) {
+        //プロバイダが利用可能になったら呼ばれる
+    }
+
+    //ロケーションステータスが変わるとコールバックされるメソッド
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        // 利用可能なプロバイダの利用状態が変化したときに呼ばれる
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
