@@ -38,4 +38,8 @@ public class PortList {
     int getSize() {
         return portList.size();
     }
+
+    List<TakaPort> getPortList(){
+        return portList;
+    }
 }
