@@ -221,7 +221,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng defPos = new LatLng(location.getLatitude(), location.getLongitude());
         CameraPosition pos = new CameraPosition(defPos, 16.0f, 0.0f, 0.0f); //CameraUpdate
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
-        
+
         SearchPort(location);
 
     }
