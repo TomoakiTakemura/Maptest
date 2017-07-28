@@ -152,7 +152,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //時刻
         Time time = new Time("Asia/Tokyo");
         time.setToNow();
-        if (time.hour >= 9 && time.hour < 10){
+        if (time.hour >= 9 && time.hour < 22){
             if (check.check(location.getLatitude(),location.getLongitude()))
                 usableText.setText(String.valueOf("利用可"));
             else
@@ -208,7 +208,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //時刻
         Time time = new Time("Asia/Tokyo");
         time.setToNow();
-        if (time.hour >= 9 && time.hour < 10){
+        if (time.hour >= 9 && time.hour < 22){
             if (check.check(location.getLatitude(),location.getLongitude()))
                 usableText.setText(String.valueOf("利用可"));
             else
