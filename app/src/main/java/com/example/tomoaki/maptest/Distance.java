@@ -29,7 +29,7 @@ public class Distance {
 
         //System.out.printf("%f km", distance);
 
-        return distance;
+        return distance*1000;
 
     }
 //
