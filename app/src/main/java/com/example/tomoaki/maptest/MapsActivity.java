@@ -139,8 +139,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Location location = locationManager.getLastKnownLocation(locationProvider);
 
         if (location != null) {
-            TextView textView = (TextView) findViewById(R.id.debug3);
-            textView.setText(String.valueOf( "onCreate() : " + location.getLatitude()) + "," + String.valueOf(location.getLongitude()));
+          //  TextView textView = (TextView) findViewById(R.id.debug3);
+           // textView.setText(String.valueOf( "onCreate() : " + location.getLatitude()) + "," + String.valueOf(location.getLongitude()));
         }
 
         SearchPort(location);
@@ -167,6 +167,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         List<TakaPort> list = p.getPortList();
         float kyori = d.DistanceCalc((float) l.getLatitude(),(float) l.getLongitude(),(float) list.get(port).getLat(),(float) list.get(port).getLng());
 
+        Log.d("DistanceTest",String.valueOf(kyori));
         textView.setText(list.get(port).getName());
         KView.setText(String.valueOf(kyori));
 
@@ -176,8 +177,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //位置情報が通知されるたびにコールバックされるメソッド
     @Override
     public void onLocationChanged(Location location){
-        TextView textView = (TextView) findViewById(R.id.debug3);
-        textView.setText(String.valueOf("onLocationChanged() : " + location.getLatitude()) + ":" + String.valueOf(location.getLongitude()));
+        //TextView textView = (TextView) findViewById(R.id.debug3);
+       // textView.setText(String.valueOf("onLocationChanged() : " + location.getLatitude()) + ":" + String.valueOf(location.getLongitude()));
 
         //利用可否判定
         TextView usableText = (TextView) findViewById(R.id.usableText);
@@ -280,8 +281,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             // デグリー角に変換する
             float degreeDir = (float)Math.toDegrees(orientation[0]);
-            TextView textView4 = (TextView) findViewById(R.id.debug4);
-            textView4.setText(String.valueOf(degreeDir));
+           // TextView textView4 = (TextView) findViewById(R.id.debug4);
+           // textView4.setText(String.valueOf(degreeDir));
             cv.MoveArc(degreeDir);
             //Log.i("onSensorChanged", "角度:" + degreeDir);
         }
