@@ -1,8 +1,5 @@
 package com.example.tomoaki.maptest;
 
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -22,7 +19,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.support.v4.app.ActivityCompat;
-import android.view.View;
 import android.widget.TextView;
 import android.content.Intent;
 import android.provider.Settings;
@@ -30,8 +26,38 @@ import android.util.Log;
 import android.widget.Toast;
 import android.Manifest;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,LocationListener,SensorEventListener {
+//compass
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.Display;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.support.v4.app.NavUtils;
+
+
+
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,LocationListener, SensorEventListener{
+
+    //GPS
     private GoogleMap mMap;
     private LocationManager locationManager;
 
@@ -43,9 +69,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        View cv = (View) findViewById(R.id.compassView);
-
 
     // Fine か Coarseのいずれかのパーミッションが得られているかチェックする
         // 本来なら、Android6.0以上かそうでないかで実装を分ける必要がある
@@ -132,13 +155,97 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
 
+    //compass
+
+    // 使わない
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+
+    // 加速度センサの値
+    private float[] mAccelerometerValue = new float[3];
+    // 磁気センサの値
+    private float[] mMagneticFieldValue = new float[3];
+    // 磁気センサの更新がすんだか
+    private boolean mValidMagneticFiled = false;
+
+    // センサーの値が変更された
+    public void onSensorChanged(SensorEvent event) {
+
+        // センサーごとの処理
+        switch (event.sensor.getType()) {
+            // 加速度センサー
+            case Sensor.TYPE_ACCELEROMETER:
+                // cloneで配列がコピーできちゃうんだね。へえ
+                this.mAccelerometerValue = event.values.clone();
+                break;
+            // 磁気センサー
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                this.mMagneticFieldValue = event.values.clone();
+                this.mValidMagneticFiled = true;
+                break;
+        }
+
+        // 値が更新された角度を出す準備ができた
+        if (this.mValidMagneticFiled) {
+            // 方位を出すための変換行列
+            float[] rotate = new float[16]; // 傾斜行列？
+            float[] inclination = new float[16];    // 回転行列
+
+            // うまいこと変換行列を作ってくれるらしい
+            SensorManager.getRotationMatrix(
+                    rotate, inclination,
+                    this.mAccelerometerValue,
+                    this.mMagneticFieldValue);
+
+            // 方向を求める
+            float[] orientation = new float[3];
+            this.getOrientation(rotate, orientation);
+
+            // デグリー角に変換する
+            float degreeDir = (float)Math.toDegrees(orientation[0]);
+            TextView textView4 = (TextView) findViewById(R.id.debug4);
+            textView4.setText(String.valueOf(degreeDir));
+            //Log.i("onSensorChanged", "角度:" + degreeDir);
+        }
     }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
 
+    // ////////////////////////////////////////////////////////////
+    // 画面が回転していることを考えた方角の取り出し
+    public void getOrientation(float[] rotate, float[] out) {
+
+        // ディスプレイの回転方向を求める(縦もちとか横持ちとか)
+        Display disp = this.getWindowManager().getDefaultDisplay();
+        // ↓コレを使うためにはAPIレベルを8にする必要がある
+        int dispDir = disp.getRotation();
+
+        // 画面回転してない場合はそのまま
+        if (dispDir == Surface.ROTATION_0) {
+            SensorManager.getOrientation(rotate, out);
+
+            // 回転している
+        } else {
+
+            float[] outR = new float[16];
+
+            // 90度回転
+            if (dispDir == Surface.ROTATION_90) {
+                SensorManager.remapCoordinateSystem(
+                        rotate, SensorManager.AXIS_Y,SensorManager.AXIS_MINUS_X, outR);
+                // 180度回転
+            } else if (dispDir == Surface.ROTATION_180) {
+                float[] outR2 = new float[16];
+
+                SensorManager.remapCoordinateSystem(
+                        rotate, SensorManager.AXIS_Y,SensorManager.AXIS_MINUS_X, outR2);
+                SensorManager.remapCoordinateSystem(
+                        outR2, SensorManager.AXIS_Y,SensorManager.AXIS_MINUS_X, outR);
+                // 270度回転
+            } else if (dispDir == Surface.ROTATION_270) {
+                SensorManager.remapCoordinateSystem(
+                        outR, SensorManager.AXIS_MINUS_Y,SensorManager.AXIS_MINUS_X, outR);
+            }
+            SensorManager.getOrientation(outR, out);
+        }
     }
 }
