@@ -26,7 +26,7 @@ import android.util.Log;
 import android.widget.Toast;
 import android.Manifest;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,LocationListener {
 
     private GoogleMap mMap;
     private LocationManager locationManager;
@@ -114,11 +114,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onLocationChanged(Location location) {
         // 緯度の表示
-        TextView textView1 = (TextView) findViewById(R.id.text_view1);
+        TextView textView1 = (TextView) findViewById(R.id.debug2);
         textView1.setText("Latitude:"+location.getLatitude());
 
         // 経度の表示
-        TextView textView2 = (TextView) findViewById(R.id.text_view2);
+        TextView textView2 = (TextView) findViewById(R.id.debug3);
         textView2.setText("Latitude:"+location.getLongitude());
     }
 
