@@ -13,27 +13,63 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+     android:orientation="vertical" >
     <TextView android:id="@+id/usableText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello, I am a TextView" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="6"
+        android:text="Hello, I am TextView" />
     <TextView android:id="@+id/debug1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello, I am a debug1" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="6"
+        android:text="Hello, I am debug1" />
     <TextView android:id="@+id/debug2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello, I am a debug2" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="6"
+        android:text="Hello, I am debug2" />
     <TextView android:id="@+id/debug3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello, I am a debug3" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="6"
+        android:text="Hello, I am debug3" />
     <fragment
        android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="3"
         tools:context="com.example.tomoaki.maptest.MapsActivity" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:orientation="horizontal" >
+        <fragment
+            android:id="@+id/compas"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            tools:context="com.example.tomoaki.maptest.MapsActivity" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView android:id="@+id/portID"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:text="Hello, I am portID" />
+            <TextView android:id="@+id/distance"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Hello, I am distance" />
+
+        </LinearLayout>
+    </LinearLayout>
+
 </LinearLayout>
