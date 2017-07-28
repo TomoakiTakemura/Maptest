@@ -61,21 +61,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private LocationManager locationManager;
 
+    //コンパス
+    private SensorManager mSensorManager;   // センサマネージャ
+    private Sensor mAccelerometer;  // 加速度センサ
+    private Sensor mMagneticField;  // 磁気センサ
+
+
+    //TextView textView1 = (TextView) findViewById(R.id.debug1);
+    //TextView textView2 = (TextView) findViewById(R.id.debug2);
+    //TextView textView3 = (TextView) findViewById(R.id.debug3);
+    //TextView textView4 = (TextView) findViewById(R.id.debug4);
+    //TextView textView5 = (TextView) findViewById(R.id.debug5);
+    //TextView textView6 = (TextView) findViewById(R.id.debug6);
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //GPS処理部
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-    // Fine か Coarseのいずれかのパーミッションが得られているかチェックする
+        // Fine か Coarseのいずれかのパーミッションが得られているかチェックする
         // 本来なら、Android6.0以上かそうでないかで実装を分ける必要がある
         if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_FINE_LOCATION)  != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            /** fine location のリクエストコード（値は他のパーミッションと被らなければ、なんでも良い）*/
+            /* fine location のリクエストコード（値は他のパーミッションと被らなければ、なんでも良い）*/
             final int requestCode = 1;
 
             // いずれも得られていない場合はパーミッションのリクエストを要求する
@@ -102,9 +118,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
-        /** 位置情報の通知するための最小時間間隔（ミリ秒） */
+        /* 位置情報の通知するための最小時間間隔（ミリ秒） */
         final long minTime = 500;
-        /** 位置情報を通知するための最小距離間隔（メートル）*/
+        /* 位置情報を通知するための最小距離間隔（メートル）*/
         final long minDistance = 1;
 
         // 利用可能なロケーションプロバイダによる位置情報の取得の開始
@@ -118,8 +134,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             textView.setText(String.valueOf( "onCreate() : " + location.getLatitude()) + "," + String.valueOf(location.getLongitude()));
         }
 
+        //コンパスのonCreate
+        // センサーを取り出す
+        mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mMagneticField = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
+        mSensorManager.registerListener(
+                this, this.mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(
+                this, this.mMagneticField, SensorManager.SENSOR_DELAY_NORMAL);
+
     }
 
+    //GPS
     //位置情報が通知されるたびにコールバックされるメソッド
     @Override
     public void onLocationChanged(Location location){
