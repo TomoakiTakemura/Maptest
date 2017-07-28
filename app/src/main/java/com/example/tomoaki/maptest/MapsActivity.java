@@ -55,14 +55,31 @@ import android.support.v4.app.NavUtils;
 
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,LocationListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,LocationListener, SensorEventListener{
 
+    //GPS
     private GoogleMap mMap;
     private LocationManager locationManager;
+
+    //コンパス
+    private SensorManager mSensorManager;   // センサマネージャ
+    private Sensor mAccelerometer;  // 加速度センサ
+    private Sensor mMagneticField;  // 磁気センサ
+
+
+    //TextView textView1 = (TextView) findViewById(R.id.debug1);
+    //TextView textView2 = (TextView) findViewById(R.id.debug2);
+    //TextView textView3 = (TextView) findViewById(R.id.debug3);
+    //TextView textView4 = (TextView) findViewById(R.id.debug4);
+    //TextView textView5 = (TextView) findViewById(R.id.debug5);
+    //TextView textView6 = (TextView) findViewById(R.id.debug6);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //GPS処理部
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -74,7 +91,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_FINE_LOCATION)  != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            /** fine location のリクエストコード（値は他のパーミッションと被らなければ、なんでも良い）*/
+            /* fine location のリクエストコード（値は他のパーミッションと被らなければ、なんでも良い）*/
             final int requestCode = 1;
 
             // いずれも得られていない場合はパーミッションのリクエストを要求する
@@ -101,9 +118,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
-        /** 位置情報の通知するための最小時間間隔（ミリ秒） */
+        /* 位置情報の通知するための最小時間間隔（ミリ秒） */
         final long minTime = 500;
-        /** 位置情報を通知するための最小距離間隔（メートル）*/
+        /* 位置情報を通知するための最小距離間隔（メートル）*/
         final long minDistance = 1;
 
         // 利用可能なロケーションプロバイダによる位置情報の取得の開始
@@ -117,8 +134,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             textView.setText(String.valueOf( "onCreate() : " + location.getLatitude()) + "," + String.valueOf(location.getLongitude()));
         }
 
+        //コンパスのonCreate
+        // センサーを取り出す
+        mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mMagneticField = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
+        mSensorManager.registerListener(
+                this, this.mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(
+                this, this.mMagneticField, SensorManager.SENSOR_DELAY_NORMAL);
+
     }
 
+    //GPS
     //位置情報が通知されるたびにコールバックされるメソッド
     @Override
     public void onLocationChanged(Location location){
@@ -152,5 +181,99 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+
+    //compass
+
+    // 使わない
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+
+    // 加速度センサの値
+    private float[] mAccelerometerValue = new float[3];
+    // 磁気センサの値
+    private float[] mMagneticFieldValue = new float[3];
+    // 磁気センサの更新がすんだか
+    private boolean mValidMagneticFiled = false;
+
+    // センサーの値が変更された
+    public void onSensorChanged(SensorEvent event) {
+
+        // センサーごとの処理
+        switch (event.sensor.getType()) {
+            // 加速度センサー
+            case Sensor.TYPE_ACCELEROMETER:
+                // cloneで配列がコピーできちゃうんだね。へえ
+                this.mAccelerometerValue = event.values.clone();
+                break;
+            // 磁気センサー
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                this.mMagneticFieldValue = event.values.clone();
+                this.mValidMagneticFiled = true;
+                break;
+        }
+
+        // 値が更新された角度を出す準備ができた
+        if (this.mValidMagneticFiled) {
+            // 方位を出すための変換行列
+            float[] rotate = new float[16]; // 傾斜行列？
+            float[] inclination = new float[16];    // 回転行列
+
+            // うまいこと変換行列を作ってくれるらしい
+            SensorManager.getRotationMatrix(
+                    rotate, inclination,
+                    this.mAccelerometerValue,
+                    this.mMagneticFieldValue);
+
+            // 方向を求める
+            float[] orientation = new float[3];
+            this.getOrientation(rotate, orientation);
+
+            // デグリー角に変換する
+            float degreeDir = (float)Math.toDegrees(orientation[0]);
+            TextView textView4 = (TextView) findViewById(R.id.debug4);
+            textView4.setText(String.valueOf(degreeDir));
+            //Log.i("onSensorChanged", "角度:" + degreeDir);
+        }
+    }
+
+
+    // ////////////////////////////////////////////////////////////
+    // 画面が回転していることを考えた方角の取り出し
+    public void getOrientation(float[] rotate, float[] out) {
+
+        // ディスプレイの回転方向を求める(縦もちとか横持ちとか)
+        Display disp = this.getWindowManager().getDefaultDisplay();
+        // ↓コレを使うためにはAPIレベルを8にする必要がある
+        int dispDir = disp.getRotation();
+
+        // 画面回転してない場合はそのまま
+        if (dispDir == Surface.ROTATION_0) {
+            SensorManager.getOrientation(rotate, out);
+
+            // 回転している
+        } else {
+
+            float[] outR = new float[16];
+
+            // 90度回転
+            if (dispDir == Surface.ROTATION_90) {
+                SensorManager.remapCoordinateSystem(
+                        rotate, SensorManager.AXIS_Y,SensorManager.AXIS_MINUS_X, outR);
+                // 180度回転
+            } else if (dispDir == Surface.ROTATION_180) {
+                float[] outR2 = new float[16];
+
+                SensorManager.remapCoordinateSystem(
+                        rotate, SensorManager.AXIS_Y,SensorManager.AXIS_MINUS_X, outR2);
+                SensorManager.remapCoordinateSystem(
+                        outR2, SensorManager.AXIS_Y,SensorManager.AXIS_MINUS_X, outR);
+                // 270度回転
+            } else if (dispDir == Surface.ROTATION_270) {
+                SensorManager.remapCoordinateSystem(
+                        outR, SensorManager.AXIS_MINUS_Y,SensorManager.AXIS_MINUS_X, outR);
+            }
+            SensorManager.getOrientation(outR, out);
+        }
     }
 }
