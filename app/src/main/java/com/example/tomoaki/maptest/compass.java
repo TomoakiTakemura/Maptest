@@ -47,7 +47,7 @@ public class compass extends Activity implements SensorEventListener{
             this.mAccelerometer = this.mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             this.mMagneticField = this.mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
-            this.mSurfaceViewExt = (SurfaceViewExt)this.findViewById(R.id.surfaceView1);
+            this.mSurfaceViewExt = (SurfaceViewExt)this.findViewById(R.id.compassView);
         }
 
 //        @Override
