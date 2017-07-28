@@ -153,13 +153,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Time time = new Time("Asia/Tokyo");
         time.setToNow();
         if (time.hour >= 9 && time.hour < 22){
-            if (check.check(location.getLatitude(),location.getLongitude()))
+            if (check.check(location.getLatitude(),location.getLongitude())) {
                 usableText.setText(String.valueOf("利用可"));
-            else
+                usableText.setBackgroundColor(Color.CYAN);
+            }
+            else {
                 usableText.setText(String.valueOf("利用不可"));
+                usableText.setBackgroundColor(Color.GRAY);
+            }
         }
-        else
+        else {
             usableText.setText(String.valueOf("時間外"));
+            usableText.setBackgroundColor(Color.WHITE);
+        }
 
 
         SearchPort(location);
@@ -209,13 +215,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Time time = new Time("Asia/Tokyo");
         time.setToNow();
         if (time.hour >= 9 && time.hour < 22){
-            if (check.check(location.getLatitude(),location.getLongitude()))
+            if (check.check(location.getLatitude(),location.getLongitude())) {
                 usableText.setText(String.valueOf("利用可"));
-            else
+                usableText.setBackgroundColor(Color.CYAN);
+            }
+            else {
                 usableText.setText(String.valueOf("利用不可"));
+                usableText.setBackgroundColor(Color.GRAY);
+            }
         }
-        else
+        else {
             usableText.setText(String.valueOf("時間外"));
+            usableText.setBackgroundColor(Color.WHITE);
+        }
         
         SearchPort(location);
 
