@@ -26,7 +26,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.support.v4.app.NavUtils;
 
-
+//
 public class compass extends Activity implements SensorEventListener{
 // ↓せんさーの値が更新されたら取り出すために必要
 
