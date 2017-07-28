@@ -40,9 +40,9 @@ public class CompassView extends View {
     public void MoveArc(float a){
 
         if(a>=0) {
-            arc = a;
+            arc = -a;
         }else{
-            arc = 360 + a;
+            arc = -360 - a;
         }
         invalidate();
     }
