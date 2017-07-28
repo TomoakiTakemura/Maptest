@@ -220,8 +220,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //利用可否判定
         TextView usableText = (TextView) findViewById(R.id.usableText);
         AreaCheck check = new AreaCheck();
-
-
+        //時刻
+        Time time = new Time("Asia/Tokyo");
+        time.setToNow();
+        if (time.hour >= 9 && time.hour < 22){
             if (check.check(location.getLatitude(),location.getLongitude())) {
                 usableText.setText(String.valueOf("利用可"));
                 usableText.setBackgroundColor(Color.CYAN);
@@ -230,9 +232,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 usableText.setText(String.valueOf("利用不可"));
                 usableText.setBackgroundColor(Color.LTGRAY);
             }
-        
-
-
+        }
+        else {
+            usableText.setText(String.valueOf("時間外"));
+            usableText.setBackgroundColor(Color.WHITE);
+        }
         SearchPort(location);
 
         //現在地
