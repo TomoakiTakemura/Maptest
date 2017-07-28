@@ -7,6 +7,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -231,8 +233,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //現在地
         LatLng defPos = new LatLng(location.getLatitude(), location.getLongitude());
-        CameraPosition pos = new CameraPosition(defPos, 16.0f, 0.0f, 0.0f); //CameraUpdate
-        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
+        //CameraPosition pos = new CameraPosition(defPos, 16.0f, 0.0f, 0.0f); //CameraUpdate
+        //mMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
+        BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+        mMap.addMarker(new MarkerOptions().position(defPos).title("現在地").icon(icon));
 
 
 
