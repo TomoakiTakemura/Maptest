@@ -153,19 +153,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Time time = new Time("Asia/Tokyo");
         time.setToNow();
         if (time.hour >= 9 && time.hour < 22){
-            if (check.check(location.getLatitude(),location.getLongitude())) {
+            if (check.check(location.getLatitude(),location.getLongitude()))
                 usableText.setText(String.valueOf("利用可"));
-                usableText.setBackgroundColor(Color.CYAN);
-            }
-            else {
+            else
                 usableText.setText(String.valueOf("利用不可"));
-                usableText.setBackgroundColor(Color.GRAY);
-            }
         }
-        else {
+        else
             usableText.setText(String.valueOf("時間外"));
-            usableText.setBackgroundColor(Color.WHITE);
-        }
 
 
         SearchPort(location);
@@ -228,7 +222,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             usableText.setText(String.valueOf("時間外"));
             usableText.setBackgroundColor(Color.WHITE);
         }
-        
+
+
+        //現在地
+        LatLng defPos = new LatLng(location.getLatitude(), location.getLongitude());
+        CameraPosition pos = new CameraPosition(defPos, 16.0f, 0.0f, 0.0f); //CameraUpdate
+        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
+
         SearchPort(location);
 
     }
