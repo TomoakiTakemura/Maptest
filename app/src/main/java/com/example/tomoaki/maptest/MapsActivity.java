@@ -60,6 +60,9 @@ import java.util.*;
 
 import com.google.android.gms.maps.model.CameraPosition;
 
+//時刻
+import android.text.format.Time;
+
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,LocationListener, SensorEventListener{
@@ -143,7 +146,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
            // textView.setText(String.valueOf( "onCreate() : " + location.getLatitude()) + "," + String.valueOf(location.getLongitude()));
         //}
 
+        //利用可否判定
+        TextView usableText = (TextView) findViewById(R.id.usableText);
+        AreaCheck check = new AreaCheck();
+        //時刻
+        Time time = new Time("Asia/Tokyo");
+        time.setToNow();
+        if (time.hour >= 9 && time.hour < 10){
+            if (check.check(location.getLatitude(),location.getLongitude()))
+                usableText.setText(String.valueOf("利用可"));
+            else
+                usableText.setText(String.valueOf("利用不可"));
+        }
+        else
+            usableText.setText(String.valueOf("時間外"));
+
+
         SearchPort(location);
+
         //コンパスのonCreate
         // センサーを取り出す
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
@@ -183,11 +203,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //利用可否判定
         TextView usableText = (TextView) findViewById(R.id.usableText);
         AreaCheck check = new AreaCheck();
-        if (check.check(location.getLatitude(),location.getLongitude()))
-            usableText.setText(String.valueOf("利用可"));
+        //時刻
+        Time time = new Time("Asia/Tokyo");
+        time.setToNow();
+        if (time.hour >= 9 && time.hour < 10){
+            if (check.check(location.getLatitude(),location.getLongitude()))
+                usableText.setText(String.valueOf("利用可"));
+            else
+                usableText.setText(String.valueOf("利用不可"));
+        }
         else
-            usableText.setText(String.valueOf("利用不可"));
-
+            usableText.setText(String.valueOf("時間外"));
+        
         SearchPort(location);
 
     }
