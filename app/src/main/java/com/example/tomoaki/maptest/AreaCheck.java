@@ -10,13 +10,14 @@ public class AreaCheck {
 
         //1つ目のエリア判定
         if (ido < 36.326308 && ido >36.321588 && keido < 139.012157 && keido > 139.002510)
-           CheckResult = true;
+            CheckResult = true;
             else{
-            if (ido <36.3273144 && ido >36.326308 && keido <139.0068387 && keido >139.0066483)
-                CheckResult = true;
-            else
-                CheckResult = false;
-        }
+                if (ido <36.3273144 && ido >36.326308 && keido <139.0068387 && keido >139.0066483)
+                    CheckResult = true;
+                else
+                    CheckResult = false;
+            }
+            
         return CheckResult;
 
     }
