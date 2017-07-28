@@ -64,7 +64,7 @@ public class Distance {
             }
         }
 
-        return minPortNum+1;
+        return minPortNum;
     }
 
 
