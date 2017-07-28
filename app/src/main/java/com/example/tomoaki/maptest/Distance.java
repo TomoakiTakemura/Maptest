@@ -36,7 +36,7 @@ public class Distance {
         return distance*1000;
 
     }
-//
+
     public float geoDirection(float lat1,float lng1,float lat2,float lng2) {
         // 緯度経度 lat1, lng1 の点を出発として、緯度経度 lat2, lng2 への方位
         // 北を０度で右回りの角度０～３６０度
