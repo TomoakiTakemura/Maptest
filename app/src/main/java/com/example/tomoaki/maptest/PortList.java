@@ -10,6 +10,7 @@ import java.util.List;
 public class PortList {
     List<TakaPort> portList;
     PortList(){
+        portList = new ArrayList<TakaPort>();
         portList.add(new TakaPort(1, true, "JR高崎駅西口", 36.3225719, 139.0118223));
         portList.add(new TakaPort(2, false, "駅西口ペデストリアンデッキ下", 36.3225881, 139.0115346));
         portList.add(new TakaPort(3, true, "駅西口広場", 36.3223523,	139.0111997));
@@ -20,7 +21,7 @@ public class PortList {
         portList.add(new TakaPort(8, true, "もてなし広場", 36.3256457, 139.0039838));
         portList.add(new TakaPort(9, true, "スズラン前", 36.3243912, 139.0047788));
         portList.add(new TakaPort(10, true, "さやもーる", 36.325258, 139.0057065));
-        portList.add(new TakaPort(11, true, "シネマテークたかさき", 36.3238018, 139.071572));
+        portList.add(new TakaPort(11, true, "シネマテークたかさき", 36.3238018, 139.0071572));
         portList.add(new TakaPort(12, true, "連雀町交差点", 36.3243796, 139.0069993));
         portList.add(new TakaPort(13, true, "群馬銀行高崎田町支店", 36.3270311, 139.0066654));
         portList.add(new TakaPort(14, true, "慈光通り", 36.3244188, 139.0081151));
@@ -33,5 +34,8 @@ public class PortList {
     }
     TakaPort getPortByNum(int num){
         return portList.get(num-1);
+    }
+    int getSize() {
+        return portList.size();
     }
 }

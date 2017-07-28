@@ -52,6 +52,13 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.support.v4.app.NavUtils;
 
+import android.location.Criteria;
+import android.location.Location;
+
+import java.util.ArrayList;
+import java.util.*;
+
+import com.google.android.gms.maps.model.CameraPosition;
 
 
 
@@ -180,9 +187,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        //LatLng sydney = new LatLng(-34, 151);
+        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        List<LatLng> LLList = new ArrayList<LatLng>();
+        PortList list = new PortList();
+        for ( int i = 1; i <= list.getSize(); ++i ) {
+            LatLng ll = new LatLng(list.getPortByNum(i).getLat(), list.getPortByNum(i).getLng());
+            LLList.add(ll);
+
+            mMap.addMarker(new MarkerOptions().position(ll).title(list.getPortByNum(i).getName()));
+        }
+        //現在地を表示
+        LatLng defPos = new LatLng(36.3242936, 139.0073642);//たかちゃり範囲の中心らへん
+        CameraPosition pos = new CameraPosition(defPos, 16.0f, 0.0f, 0.0f); //CameraUpdate
+        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
     }
 
 
