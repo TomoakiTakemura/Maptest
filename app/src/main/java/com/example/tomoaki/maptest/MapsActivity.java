@@ -196,6 +196,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         int I_kyori = (int)kyori;
 
         Log.d("DistanceTest",String.valueOf(I_kyori));
+
+        float ac = d.geoDirection((float) l.getLatitude(),(float) l.getLongitude(),(float) list.get(port).getLat(),(float) list.get(port).getLng());
+        cv.changeArc(ac);
+
         textView.setText(list.get(port).getName());
         KView.setText(String.valueOf(I_kyori));
 
