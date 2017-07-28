@@ -162,6 +162,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onLocationChanged(Location location){
         TextView textView = (TextView) findViewById(R.id.debug3);
         textView.setText(String.valueOf("onLocationChanged() : " + location.getLatitude()) + ":" + String.valueOf(location.getLongitude()));
+
+        //利用可否判定
+        TextView usableText = (TextView) findViewById(R.id.usableText);
+        AreaCheck check = new AreaCheck();
+        if (check.check(location.getLatitude(),location.getLongitude()))
+            usableText.setText(String.valueOf("利用可"));
+        else
+            usableText.setText(String.valueOf("利用不可"));
+
+
+
     }
 
     //ロケーションプロバイダが利用不可能になるとコールバックされるメソッド
